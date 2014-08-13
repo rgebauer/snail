@@ -13,8 +13,8 @@ namespace Characters
 		public float MovementAcceleration;
 
 		public float MaxRotationSpeed;
-		public float StartRotationSmoothness = 0.1f;
-		public float EndRotationSmoothness = 0.1f;
+		public float StartRotationSmoothness = 0.2f;
+		public float EndRotationSmoothness = 0.2f;
 		public Generators.Generator CollectablesGenerator;
 
 		public Timer GameTimer;
@@ -32,13 +32,13 @@ namespace Characters
 
 
 		public void ProcessTrigger(GameObject obj)
-		{
+		{    
 			Debug.Log("Player trigger handled");
 			Collectables.Coin coin = obj.GetComponent<Collectables.Coin>();
 			if(coin != null)
 			{
 				CollectablesCout++;
-
+				                                          
 				if(CollectablesCout == CollectablesGenerator.Count)
 				{
 					YouWinFlag = true;
