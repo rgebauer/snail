@@ -1,0 +1,2 @@
+#on windows we need Unix EOF in sh scripts
+*.sh eol=lf
