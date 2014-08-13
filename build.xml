@@ -1,0 +1,203 @@
+<project name="Snail" default="build" >
+	<!-- default values -->
+	<property name="platform" value="unity_iphone"/>
+	<property name="target" value="Snail"/>
+	<property name="product" value="Snail"/>
+	<property name="configuration" value="Debug"/>
+	<property name="provisionProfile" value="LM_Development"/>
+	<property name="build.number" value="0"/>
+	<property name="bundleId" value="com.Disney.Snail"/>
+	<property name="enviromentOptions" value="EnvDevice" />
+	<property name="functionalityOptions" value="FuncDemo" />
+	<property name="resourceBundleName" value="ExternalResources.unity3d" />
+	
+	<property name="unityVersion" value="" />
+	<property name="XcodeCmdLineParams" value="" />
+	<property name="projectDir" value="." />
+	<property name="dataType" value="default" />
+	
+	<property name="output" value="${target}-${configuration}-${provisionProfile}-${build.number}" />
+	
+	<property environment="env"/>
+	<property name="MDISNEY_HOME" value="${env.HOME}/mdisney" />
+	<property name="publicToolsDir" value="${MDISNEY_HOME}/mo/production/global_framework/build_tools/public" />
+	<property name="lmUtilsDir" value="${MDISNEY_HOME}/mo/production/global_framework/build_tools/in_house/livingmobile"/>
+	
+	<taskdef resource="antUtils.taskdefs" classpath="${lmUtilsDir}/antUtils.jar;${lmUtilsDir}/p4utils.jar" />
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${publicToolsDir}/ant-contrib-1.0b3/ant-contrib.jar" />
+	<taskdef resource="org/jwaresoftware/antxtras/install/antlib-advanced.xml" classpath="${publicToolsDir}/antxtras_3.0.0b1/jw-antxtras-advanced.jar;${publicToolsDir}/antxtras_3.0.0b1/jw-antxtras.jar" />
+
+	<basename property="outFile" file="${output}" suffix="zip" />
+	<dirname property="outputDir" file="${output}"/>
+	<mkdir dir="${outputDir}"/>
+		
+	<echo>VersionName:"${versionName} and versioncode:"${versionCode}" projectDir:"${projectDir}</echo>
+	
+	<echoproperties/>
+	
+	<!-- conditions setting -->
+	<condition property="isIphone">
+		<or>
+			<contains string="${platform}" substring="iphone" casesensitive="false" />
+			<contains string="${assets_platform}" substring="iphone" casesensitive="false" />
+		</or>
+	</condition>
+	
+	<condition property="isAndroid">
+		<or>
+			<contains string="${platform}" substring="android" casesensitive="false" />
+			<contains string="${assets_platform}" substring="android" casesensitive="false" />
+		</or>
+	</condition>
+	
+	<condition property="isMacServer" value="true">
+		<os family="mac"/>
+	</condition>
+	
+	<condition property="isWinServer" value="true">
+		<os family="windows"/>
+	</condition>
+	
+	<!--<target name="build" depends="clean">-->
+	<target name="build">
+		<delete dir="Builds/Devices" failonerror="false" />
+		
+		<mkdir dir="Builds/Devices"/>
+		<mkdir dir="Builds/Devices/Android"/>
+		<mkdir dir="Builds/Devices/IOS"/>
+		
+		<do if="isIphone">
+			<!-- iphone -->
+			<echo>PROFILES</echo>
+			<echo message="provisionProfile = ${provisionProfile}"/>
+			<delete>
+				<fileset dir="${env.HOME}/Library/MobileDevice/Provisioning Profiles" includes="*.mobileprovision"/>
+			</delete>
+			<copy file="${MDISNEY_HOME}/Production/Builds/iPhone/ProvisioningProfiles/${provisionProfile}.mobileprovision" 
+				  todir="${env.HOME}/Library/MobileDevice/Provisioning Profiles" />
+
+
+			<!-- build -->
+			<echo>UNITY BUILD</echo>
+			<exec executable="/Applications/${unityVersion}/Unity.app/Contents/MacOS/Unity" dir="${projectDir}" failonerror="true">
+				<arg line="-batchmode -quit -projectPath ${projectDir} -logfile -executeMethod CommandBuild.BuildIOS -customArgs:bundleId=${bundleId}"/>
+			</exec>
+
+			<property name="xcode.projectDir" value="${projectDir}/Builds/Devices/IOS" />
+			<property name="xcode.projectName" value="Unity-iPhone" />
+			<property name="xcode.target" value="Unity-iPhone" />
+
+			<!-- replace developer signing id to distribution for non development builds, becasue UNITY generate developer for all configs -->
+			<if>
+				<not>
+					<contains string="${configuration}" substring="Debug" casesensitive="false" />			
+				</not>
+				<then>
+					<replace file="${xcode.projectDir}/${xcode.projectName}.xcodeproj/project.pbxproj" token="CODE_SIGN_IDENTITY = &quot;iPhone Developer&quot;" value="CODE_SIGN_IDENTITY = &quot;iPhone Distribution&quot;"/>
+					<replace file="${xcode.projectDir}/${xcode.projectName}.xcodeproj/project.pbxproj" token="&quot;CODE_SIGN_IDENTITY[sdk=iphoneos*]&quot; = &quot;iPhone Developer&quot;" value="&quot;CODE_SIGN_IDENTITY[sdk=iphoneos*]&quot; = &quot;iPhone Distribution&quot;"/>
+				</then>
+			</if>
+			
+			<!-- change version in generated plist -->
+			<echo>Set version to plist on versionName:"${versionName} and versioncode:"${versionCode}"</echo>
+			<versionFile command="set" version="${versionName} (${versionCode})" useP4="false">
+				<fileset file="Builds/Devices/IOS/Info.plist"/>
+			</versionFile>
+			
+			<echo>XCODE BUILD</echo>
+			<exec dir="${xcode.projectDir}" executable="xcodebuild" failonerror="true">
+				<arg value="-project"/>
+				<arg value="${xcode.projectName}.xcodeproj"/>
+				<arg value="-target"/>
+				<arg value="${xcode.target}"/>
+				<arg value="-configuration"/>
+				<arg value="${configuration}"/>
+				<arg value="SYMROOT=build"/>
+				<arg value="CODE_SIGNING_REQUIRED=NO"/>
+				<arg value="clean"/>
+			</exec>
+			<exec dir="${xcode.projectDir}" executable="xcodebuild" failonerror="true">
+				<arg value="-project"/>
+				<arg value="${xcode.projectName}.xcodeproj"/>
+				<arg value="-target"/>
+				<arg value="${xcode.target}"/>
+				<arg value="-configuration"/>
+				<arg value="${configuration}"/>
+				<arg value="DEBUG_INFORMATION_FORMAT=dwarf-with-dsym"/>
+				<arg value="STRIP_INSTALLED_PRODUCT = YES"/>
+				<arg value="GCC_GENERATE_DEBUGGING_SYMBOLS = YES"/>
+				<arg line="SYMROOT=build ${XcodeCmdLineParams}"/> <!-- additonal arguments pass from build server -->
+			</exec>
+
+			<!-- copy dSYM -->
+			<copy todir="${outputDir}/${outFile}.app.dSYM" >
+				<!--fileset dir="${xcode.projectDir}/build/${configuration}-iphoneos/${product}.app.dSYM" /-->
+				<fileset dir="${xcode.projectDir}/build/${product}.app.dSYM" />
+			</copy>
+
+			<chmod perm="ugo+w" >
+				<fileset dir="${outputDir}/${outFile}.app.dSYM" />
+				<dirset dir="${outputDir}/${outFile}.app.dSYM" />
+			</chmod>
+
+			<echo>PACKING IPA</echo>
+			<property name="outputIpa" value="${outputDir}/${outFile}.ipa" />
+
+			<!--exec dir="${xcode.projectDir}/build/${configuration}-iphoneos" executable="xcrun" failonerror="true" -->
+			<exec dir="${xcode.projectDir}/build" executable="xcrun" failonerror="true" >
+				<arg value="-sdk"/>
+				<arg value="iphoneos"/>
+				<arg value="PackageApplication"/>
+				<arg value="-v" />
+				<arg value="${product}.app"/>
+				<arg value="-o"/>
+				<arg value="${outputIpa}"/>
+				<arg value="-embed"/>
+				<arg value="${provisionProfile}.mobileprovision"/>
+			</exec>		
+		</do>
+		
+		<do if="isAndroid">
+			<!-- android -->
+			
+			<!-- Prepare android plugin according to set parametres -->
+			<antcall target="createAndroidPlugin" />
+			
+			<echo>UNITY BUILD</echo>
+			<do if="isMacServer">
+				<exec executable="${basedir}/Builds/Scripts/buildAndroid.sh" dir="Builds/Scripts/" failonerror="true">
+					<!-- all arguments must be in one arg value! -->
+					<arg value="-customArgs:keystoreName=${user.home}/mdisney/Production/Builds/Android/Certificates/Disney_LM.keystore+keystorePass=disney1234+keyAlias=disney_keystore+bundleVersion=${versionName}+bundleVersionCode=${versionCode}+bundleId=${bundleId}+product=${product}"/>
+					<arg value="${unityVersion}"/>
+				</exec>
+			</do>
+			
+			<do if="isWinServer">
+				<exec executable="c:\Program Files (x86)\Unity\Editor\Unity.exe" dir="" failonerror="true">
+					<arg line="-batchmode -quit -nographics -projectPath ${basedir} -logFile ${outputDir}/${outFile}.log -executeMethod CommandBuild.BuildAndroid -customArgs:keystoreName=${user.home}/mdisney/Production/Builds/Android/Certificates/Disney_LM.keystore+keystorePass=disney1234+keyAlias=disney_keystore+bundleVersion=${versionName}+bundleVersionCode=${versionCode}+bundleId=${bundleId}+product=${product}"/>
+				</exec>
+			</do>
+
+			<property name="outputApk" value="${outputDir}/${outFile}.apk" />
+			
+			<!-- copy apk -->
+			<copy file="Builds/Devices/Android/${product}.apk" tofile="${outputApk}"/>
+			
+			<!-- Pack manifest -->
+			<antcall target="packAndroidManifest" />
+		</do>
+
+	</target>
+	
+	<target name="packAndroidManifest">
+		<echo>Create archive with android manifest</echo>
+		
+		<!-- zip manifest -->
+		<echo> outputDir:${outputDir} </echo>
+		<zip destfile="${outputDir}/${outFile}.manifest.zip" encoding="UTF-8" createUnicodeExtraFields="always">
+			<fileset dir="${basedir}/Assets/Plugins/Android/" >
+				<include name="AndroidManifest.xml"/>
+			</fileset>
+		</zip>
+	</target>
+</project>
