@@ -19,17 +19,23 @@ namespace UI
 			*/
 			GUI.skin.font = font;
 
+			GUIStyle centeredStyle = GUI.skin.GetStyle("Label");
+			centeredStyle.alignment = TextAnchor.UpperCenter;
+			
+			GUIStyle centeredStyleButton = GUI.skin.GetStyle("Button");  
+			centeredStyle.alignment = TextAnchor.UpperCenter;
+
+			GUIStyle timeStyle = new GUIStyle ();
+			timeStyle.alignment = TextAnchor.UpperCenter;
+			timeStyle.fontSize = Screen.height/20;
+			timeStyle.normal.textColor = Color.white;
+
 			GUI.Label (new Rect (0, Screen.height / 10, Screen.width / 2, Screen.height / 10), "Level: " + (Application.loadedLevel + 1));
-			GUI.Label (new Rect (0, Screen.height / 10, Screen.width, Screen.height / 10), "Time: " + GameTimer.ActualTime);
+			GUI.Label (new Rect (0, 2*(Screen.height / 10), Screen.width, Screen.height / 10), "Time: " + GameTimer.ActualTime,timeStyle);
 
 			if(GameTimer.ActualTime <= 0 && !Player.YouWinFlag) 
 			{
-				GUIStyle centeredStyle = GUI.skin.GetStyle("Label");
-				centeredStyle.alignment = TextAnchor.UpperCenter;
-
-				GUIStyle centeredStyleButton = GUI.skin.GetStyle("Button");  
-				centeredStyle.alignment = TextAnchor.UpperCenter;
-
+			
 				GUI.Label(new Rect(0, Screen.height/2, Screen.width, Screen.height/10), "TIME IS UP!!!", centeredStyle);
 				if(GUI.Button(new Rect(0, Screen.height/2+Screen.height/10, Screen.width, Screen.height/10), "Restart", centeredStyleButton))
 				{

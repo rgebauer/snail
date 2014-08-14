@@ -25,7 +25,12 @@ namespace Generators
 
 		void Start()
 		{
+			//check collectables
+			GameObject[] collectables = GameObject.FindGameObjectsWithTag("Collectable");
+
 			_actualCount = Count;
+
+			Count += collectables.Length;
 
 			if(GenerateOnStart)
 			{
@@ -34,7 +39,7 @@ namespace Generators
 					Generate();
 				}
 			} 
-			else
+			else if (collectables.Length == 0)
 			{
 				Generate();
 			}
