@@ -58,7 +58,7 @@ namespace Characters
 			Triggers.OutOfPlayground outOfPlayground = obj.GetComponent<Triggers.OutOfPlayground>();
 			if(outOfPlayground != null && GameTimer.ActualTime > 0 && !YouWinFlag)
 			{
-				Application.LoadLevel(0);
+				Application.LoadLevel(Application.loadedLevel);
 			}
 		}
 
@@ -75,6 +75,9 @@ namespace Characters
 				{
 					_rigidBody.AddRelativeForce(_impulsFromEnemy);
 				}
+
+				//rotate more
+				MaxRotationSpeed += 1.0f;
 			}
 		}
 
@@ -95,7 +98,7 @@ namespace Characters
 
 			if(InputController.CtrlState == InputCtrl.State.MOVE)
 			{
-				if(_rigidBody.velocity.magnitude <= MaxMovementSpeed)
+  				if(_rigidBody.velocity.magnitude <= MaxMovementSpeed)
 				{
 					_rigidBody.AddRelativeForce(Vector3.forward * MovementAcceleration);
 				}

@@ -18,10 +18,17 @@ namespace UI
 
 			if(GameTimer.ActualTime >= 0 && Player.YouWinFlag) 
 			{
-				GUI.Label(new Rect(200, 100, 200, 20), "YOU WIN!!!");
-				if(GUI.Button(new Rect(200, 150, 70, 20), "Restart"))
+				GUIStyle centeredStyle = GUI.skin.GetStyle("Label");
+				centeredStyle.alignment = TextAnchor.UpperCenter;
+				
+				GUIStyle centeredStyleButton = GUI.skin.GetStyle("Button");  
+				centeredStyle.alignment = TextAnchor.UpperCenter;
+				
+				GUI.Label(new Rect(0, Screen.height/2, Screen.width, Screen.height/10), "YOU WIN!!!", centeredStyle);
+
+				if(GUI.Button(new Rect(0, Screen.height/2+Screen.height/10, Screen.width, Screen.height/10), "Next level", centeredStyleButton))
 				{
-					Application.LoadLevel(0);
+					Application.LoadLevel((Application.loadedLevel+1)%Application.levelCount);
 				}
 			}
 		}

@@ -8,7 +8,7 @@ namespace Characters
 
 		protected override void ProcessInput()
 		{
-			if(Input.GetKey(ControllKey))
+			if(Input.GetKey(ControllKey) || Input.touchCount > 0)
 			{
 				CtrlState = State.ROTATE;
 			} 
@@ -17,6 +17,8 @@ namespace Characters
 				CtrlState = State.MOVE;
 			}
 		}
+
+
 	}
 
 }
