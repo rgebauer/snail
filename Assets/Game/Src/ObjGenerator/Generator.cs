@@ -10,6 +10,7 @@ namespace Generators
 		public GameObject ObjectsContainer;
 		public GameObject ObjectPrefab;
 		public int Count = 0;
+		public int TimeBonus = 0;
 		public bool GenerateOnStart = true;
 		public bool GenerateOnPlayerCollision = false;
 
@@ -64,6 +65,10 @@ namespace Generators
 			}
 
 			obj.transform.position = position;
+
+			//set time bonus
+			Collectables.Coin coinScript = (Collectables.Coin)obj.GetComponent<Collectables.Coin>();
+			coinScript.TimeBonus = TimeBonus;
 
 			_actualCount--;
 		}

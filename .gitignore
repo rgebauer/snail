@@ -12,6 +12,7 @@ tags
 *.unityproj
 *.sln
 *.suo
+*.apk
 
 *.userprefs
 *.pidb

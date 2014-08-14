@@ -77,7 +77,7 @@ namespace Characters
 				}
 
 				//rotate more
-				MaxRotationSpeed += 1.0f;
+				//MaxRotationSpeed += 1.0f;
 			}
 		}
 
