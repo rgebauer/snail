@@ -159,16 +159,10 @@
 		
 		<do if="isAndroid">
 			<!-- android -->
-			
-			<!-- Prepare android plugin according to set parametres -->
-			<antcall target="createAndroidPlugin" />
-			
-			<echo>UNITY BUILD</echo>
+			<echo>UNITY ANDROID BUILD</echo>
 			<do if="isMacServer">
-				<exec executable="${basedir}/Builds/Scripts/buildAndroid.sh" dir="Builds/Scripts/" failonerror="true">
-					<!-- all arguments must be in one arg value! -->
-					<arg value="-customArgs:keystoreName=${user.home}/mdisney/Production/Builds/Android/Certificates/Disney_LM.keystore+keystorePass=disney1234+keyAlias=disney_keystore+bundleVersion=${versionName}+bundleVersionCode=${versionCode}+bundleId=${bundleId}+product=${product}"/>
-					<arg value="${unityVersion}"/>
+				<exec executable="/Applications/${unityVersion}/Unity.app/Contents/MacOS/Unity" dir="${projectDir}" failonerror="true">
+					<arg line="-batchmode -quit -projectPath ${projectDir} -logfile -executeMethod CommandBuild.BuildAndroid -customArgs:keystoreName=${user.home}/mdisney/Production/Builds/Android/Certificates/Disney_LM.keystore+keystorePass=disney1234+keyAlias=disney_keystore+bundleVersion=${versionName}+bundleVersionCode=${versionCode}+bundleId=${bundleId}+product=${product}"/>
 				</exec>
 			</do>
 			
@@ -182,22 +176,7 @@
 			
 			<!-- copy apk -->
 			<copy file="Builds/Devices/Android/${product}.apk" tofile="${outputApk}"/>
-			
-			<!-- Pack manifest -->
-			<antcall target="packAndroidManifest" />
 		</do>
 
-	</target>
-	
-	<target name="packAndroidManifest">
-		<echo>Create archive with android manifest</echo>
-		
-		<!-- zip manifest -->
-		<echo> outputDir:${outputDir} </echo>
-		<zip destfile="${outputDir}/${outFile}.manifest.zip" encoding="UTF-8" createUnicodeExtraFields="always">
-			<fileset dir="${basedir}/Assets/Plugins/Android/" >
-				<include name="AndroidManifest.xml"/>
-			</fileset>
-		</zip>
 	</target>
 </project>
