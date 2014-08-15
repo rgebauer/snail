@@ -13,7 +13,7 @@ namespace AI
 		public LayerMask GeneratedPositionLayerMask;
 
 		public float CollisionImpuls = 10.0f;
-
+		public float AttackPlayerChance = 50.0f;
 
 		void OnCollisionEnter(Collision collision)
 		{
@@ -31,7 +31,7 @@ namespace AI
 				return;
 			}
 
-			if(Random.Range(-1.0f, 1.0f) < 0)
+			if(Random.Range(0f, 1.0f) > (AttackPlayerChance/100))
 			{
 				ActorScript.MoveOrder(GetRandomPosition());
 			}

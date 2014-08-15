@@ -70,11 +70,18 @@ namespace Characters
 				AI.EnemyAI enemyAi = obj.GetComponent<AI.EnemyAI>();
 				float impuls = enemyAi.CollisionImpuls;
 
-				_impulsFromEnemy = enemyAi.gameObject.transform.forward * impuls;
+				Vector3 norm = transform.position - enemyAi.gameObject.transform.position;
+				norm.Normalize();
+
+				_impulsFromEnemy = norm * impuls;
+
 				if(_rigidBody.velocity.magnitude <= MaxMovementSpeed)
 				{
 					_rigidBody.AddRelativeForce(_impulsFromEnemy);
 				}
+
+				//enemy
+				enemyAi.gameObject.rigidbody.AddRelativeForce(-(_impulsFromEnemy/10));
 
 				//rotate more
 				//MaxRotationSpeed += 1.0f;
