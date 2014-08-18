@@ -12,7 +12,6 @@ namespace AI
 		public Characters.PlayerCtrl Player;
 		public LayerMask GeneratedPositionLayerMask;
 
-		public float CollisionImpuls = 10.0f;
 		public float AttackPlayerChance = 50.0f;
 
 		void OnCollisionEnter(Collision collision)

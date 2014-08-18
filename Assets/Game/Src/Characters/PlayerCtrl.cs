@@ -66,6 +66,7 @@ namespace Characters
 		{
 			if(obj.tag == "Enemy")
 			{
+				/*
 				Debug.Log("Collision with Enemy");
 				AI.EnemyAI enemyAi = obj.GetComponent<AI.EnemyAI>();
 				float impuls = enemyAi.CollisionImpuls;
@@ -73,16 +74,17 @@ namespace Characters
 				Vector3 norm = transform.position - enemyAi.gameObject.transform.position;
 				norm.Normalize();
 
-				_impulsFromEnemy = norm * impuls;
+				_impulsFromEnemy = -norm * impuls;
 
 				if(_rigidBody.velocity.magnitude <= MaxMovementSpeed)
 				{
-					_rigidBody.AddRelativeForce(_impulsFromEnemy);
+					_rigidBody.AddForce(_impulsFromEnemy);
 				}
 
 				//enemy
 				enemyAi.gameObject.rigidbody.AddRelativeForce(-(_impulsFromEnemy/10));
 
+				*/
 				//rotate more
 				//MaxRotationSpeed += 1.0f;
 			}
