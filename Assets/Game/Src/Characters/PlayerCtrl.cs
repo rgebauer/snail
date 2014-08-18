@@ -17,6 +17,7 @@ namespace Characters
 		public float EndRotationSmoothness = 0.2f;
 		public Generators.Generator CollectablesGenerator;
 
+
 		public Timer GameTimer;
 
 		public Transform Nose;
@@ -66,7 +67,6 @@ namespace Characters
 		{
 			if(obj.tag == "Enemy")
 			{
-				/*
 				Debug.Log("Collision with Enemy");
 				AI.EnemyAI enemyAi = obj.GetComponent<AI.EnemyAI>();
 				float impuls = enemyAi.CollisionImpuls;
@@ -74,19 +74,20 @@ namespace Characters
 				Vector3 norm = transform.position - enemyAi.gameObject.transform.position;
 				norm.Normalize();
 
-				_impulsFromEnemy = -norm * impuls;
+				_impulsFromEnemy = norm * impuls;
 
 				if(_rigidBody.velocity.magnitude <= MaxMovementSpeed)
 				{
-					_rigidBody.AddForce(_impulsFromEnemy);
+					_rigidBody.AddRelativeForce(_impulsFromEnemy, ForceMode.Impulse);
 				}
 
 				//enemy
-				enemyAi.gameObject.rigidbody.AddRelativeForce(-(_impulsFromEnemy/10));
+				enemyAi.gameObject.rigidbody.AddRelativeForce(-_impulsFromEnemy, ForceMode.Impulse);
 
-				*/
 				//rotate more
 				//MaxRotationSpeed += 1.0f;
+
+
 			}
 		}
 
@@ -128,7 +129,10 @@ namespace Characters
 			{
 				Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, _actualRotationSpeed * InputController.GetRotationDirection, 0));
 				_rigidBody.MoveRotation(_rigidBody.rotation * deltaRotation);
+
 			}
+
+
 		}
 	}
 }
