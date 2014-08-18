@@ -83,7 +83,61 @@ public class Actor : MonoBehaviour {
 			}
 		}
 	}
-	
+
+	void MoveTowardxx()
+	{
+		if (DebugMode)
+		{
+			for (int i=0; i<_path.Count-1; ++i)
+			{
+				UnityEngine.Debug.DrawLine((Vector3)_path[i], (Vector3)_path[i+1], Color.white, 0.01f);
+			}
+		}
+		
+		Vector3 newPos = transform.position;
+		
+		float Xdistance = newPos.x - _currNode.x;
+		if (Xdistance < 0) Xdistance -= Xdistance*2;
+		float Zdistance = newPos.z - _currNode.z;
+		if (Zdistance < 0) Zdistance -= Zdistance*2;
+		
+		if ((Xdistance < 0.1 && Zdistance < 0.1) && _target == _currNode) //Reached target
+		{
+			ChangeState(State.IDLE);
+		}
+		else if (Xdistance < 0.1 && Zdistance < 0.1)
+		{
+			_nodeIndex++;
+			_onNode = true;
+		}
+		
+		/***Move toward waypoint***/
+		Vector3 motion = _currNode - newPos;
+		motion.Normalize();
+		newPos += motion * _speed;
+
+		/*
+		if(_rigidBody != null) 
+		{
+			_rigidBody.MovePosition(newPos);
+		}
+		else 
+		*/
+		{
+			transform.position = newPos;
+		}
+		
+		if(transform.position == newPos)
+		{
+			_positionFixCounter++;
+			if(_positionFixCounter == 50)
+			{
+				ChangeState(State.IDLE);
+			}
+		}
+		
+	}
+
 	void MoveToward()
 	{
 		if (DebugMode)
@@ -116,14 +170,16 @@ public class Actor : MonoBehaviour {
 		motion.Normalize();
 		newPos += motion * _speed;
 
-//		if(_rigidBody != null) 
-//		{
-//			_rigidBody.MovePosition(newPos);
-//		}
-//		else 
-//		{
+		if(_rigidBody != null) 
+		{
+			_rigidBody.MovePosition(newPos);
+			//_rigidBody.velocity = (motion * _speed); 
+
+		}
+		else 
+		{
 			transform.position = newPos;
-//		}
+		}
 
 		if(transform.position == newPos)
 		{
