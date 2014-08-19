@@ -119,7 +119,7 @@ namespace Picus.Ctrl
 		{
 			float minDist = float.MaxValue;
 			GameObject nearest = null;
-			Vector3 mousePosition;
+			Vector3 mousePosition = Vector3.zero;
 			if (regardMousePos)
 			{
 				Vector2 mousePosition2D = MouseToSceneZeroZPosition();

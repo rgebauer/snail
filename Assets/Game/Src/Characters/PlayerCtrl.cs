@@ -78,11 +78,11 @@ namespace Characters
 
 				if(_rigidBody.velocity.magnitude <= MaxMovementSpeed)
 				{
-					//_rigidBody.AddRelativeForce(_impulsFromEnemy, ForceMode.Impulse);
+					_rigidBody.AddRelativeForce(_impulsFromEnemy, ForceMode.Impulse);
 				}
 
 				//enemy
-				//enemyAi.gameObject.rigidbody.AddRelativeForce(-_impulsFromEnemy, ForceMode.Impulse);
+				enemyAi.gameObject.rigidbody.AddRelativeForce(-_impulsFromEnemy, ForceMode.Impulse);
 
 				//rotate more
 				//MaxRotationSpeed += 1.0f;
