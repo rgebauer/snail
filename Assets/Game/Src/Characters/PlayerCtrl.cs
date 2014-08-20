@@ -13,13 +13,12 @@ namespace Characters
 		public float MovementAcceleration;
 
 		public float MaxRotationSpeed;
+		public float BrakeForce = 15.0f;
 		public float StartRotationSmoothness = 0.2f;
 		public float EndRotationSmoothness = 0.2f;
 		public Generators.Generator CollectablesGenerator;
 
-
 		public Timer GameTimer;
-
 		public Transform Nose;
 
 		public bool YouWinFlag { get; private set; }
@@ -78,7 +77,7 @@ namespace Characters
 
 				if(_rigidBody.velocity.magnitude <= MaxMovementSpeed)
 				{
-					_rigidBody.AddRelativeForce(_impulsFromEnemy, ForceMode.Impulse);
+					_rigidBody.AddRelativeForce(_impulsFromEnemy, ForceMode.Acceleration);
 				}
 
 				//enemy
@@ -110,9 +109,19 @@ namespace Characters
 
 			if(InputController.CtrlState == InputCtrl.State.MOVE)
 			{
+
+
   				if(_rigidBody.velocity.magnitude <= MaxMovementSpeed)
 				{
-					_rigidBody.AddRelativeForce(Vector3.forward * MovementAcceleration);
+					//reset force
+					if (InputController.StateChange) 
+					{
+						Vector3 velocity = _rigidBody.velocity;
+						velocity.Normalize();
+						_rigidBody.AddRelativeForce(-velocity * MovementAcceleration * BrakeForce, ForceMode.Force);
+					}
+
+					_rigidBody.AddRelativeForce(Vector3.forward * MovementAcceleration, ForceMode.Force);
 				}
 			}
 

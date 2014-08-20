@@ -16,6 +16,8 @@ namespace Characters
 		public State CtrlState { get; protected set; }
 		public KeyCode ControllKey;
 		public bool SwitchingRotateDirection = false;
+		public bool StateChange = false;
+
 
 		State _state = State.MOVE;
 		State _previousState = State.MOVE;
@@ -34,10 +36,14 @@ namespace Characters
 					_rotationDirection *= (-1);
 				}
 			}
+
+			StateChange = true;
 		}
 
 		void FixedUpdate()
 		{
+			StateChange = false;
+
 			_previousState = CtrlState;
 
 			ProcessInput();
