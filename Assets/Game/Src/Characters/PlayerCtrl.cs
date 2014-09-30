@@ -13,7 +13,7 @@ namespace Characters
 		public float MovementAcceleration;
 
 		public float MaxRotationSpeed;
-		public float BrakeForce = 15.0f;
+		//public float BrakeForce = 15.0f;
 		public float StartRotationSmoothness = 0.2f;
 		public float EndRotationSmoothness = 0.2f;
 		public Generators.Generator CollectablesGenerator;
@@ -114,12 +114,15 @@ namespace Characters
   				if(_rigidBody.velocity.magnitude <= MaxMovementSpeed)
 				{
 					//reset force
+					/*
 					if (InputController.StateChange) 
 					{
 						Vector3 velocity = _rigidBody.velocity;
 						velocity.Normalize();
 						_rigidBody.AddRelativeForce(-velocity * MovementAcceleration * BrakeForce, ForceMode.Force);
+						_rigidBody.AddRelativeForce(-velocity * MovementAcceleration, ForceMode.Force);
 					}
+					*/
 
 					_rigidBody.AddRelativeForce(Vector3.forward * MovementAcceleration, ForceMode.Force);
 				}

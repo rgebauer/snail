@@ -119,8 +119,8 @@ namespace Picus.Sys
 			Rect buttonRect = GUILayoutUtility.GetRect(content, _guiStyle);
 			if (Event.current.type == EventType.Repaint)
 			{
-				_maxSizeX = Mathf.Max(buttonRect.size.x, _maxSizeX);
-				_maxSizeY = Mathf.Max(buttonRect.size.y, _maxSizeY);
+				_maxSizeX = Mathf.Max(buttonRect.x, _maxSizeX);
+				_maxSizeY = Mathf.Max(buttonRect.y, _maxSizeY);
 			}
 		}
 
